@@ -9,8 +9,14 @@
 #include <menu/lcd.h>
 #include <menu/menu.h>
 
+#define LCD_ADDR 0x27
+#define BMP_ADDR // nothing for now
 #define SDA_PIN 4
 #define SCL_PIN 5
+
+// Pump pins
+#define PUMP_1 22 // ?
+#define PUMP_2 23 // ?
 
 // Button pins
 #define UP_PIN     10
@@ -19,114 +25,64 @@
 #define LEFT_PIN   12
 #define MIDDLE_PIN 11
 
+PumpDriver* pump_driver;
+  int pump_1_val = 0;
+  int pump_2_val = 0;
+
+int read_temperature() {
+    return 25; 
+}
+
+void drive_pump(){
+  pump_driver->drive(pump_1_val, pump_2_val);
+}
+
 int main() {
-  //stdio_init_all();
+    // Initialize hardware components
+    LCD* lcd;
+    Button left(LEFT_PIN), up(UP_PIN), middle(MIDDLE_PIN), down(DOWN_PIN), right(RIGHT_PIN);
+    // PumpDriver* pump_driver;
 
-  // HC_SR04 sensor;
-  // sensor.init(3, 2);
+    // Initialize LCD and buttons
+    lcd->lcd_init(SDA_PIN, SCL_PIN, LCD_ADDR);
+    pump_driver->init(lcd, PUMP_1, PUMP_2);
 
-  // LCD lcd;
+    // Initialize main menu
+    Menu main_menu(lcd);
+    //main_menu.init_pump(&pump_driver);
+    main_menu.init_button(&left, &up, &middle, &down, &right);
 
-  // //i2c_scan(PIN_SDA, PIN_SCL);
-  // lcd.lcd_init(SDA_PIN, SCL_PIN, 0x27);
-  // lcd.lcd_set_cursor(0, 0);
-  // lcd.lcd_print_str("mikas to cwel haha");
+    // Define submenus and items
+    Menu nalej_submenu(lcd);
+    Menu system_submenu(lcd);
 
-  // sleep_ms(2500);
-  // while(true){
-  //   sleep_ms(1000);
-  //   lcd_clear();
-  //   sleep_ms(500);
+    // int pump_1_val = 0;
+    // int pump_2_val = 0;
 
-  //   uint8_t num = get_rand_32();
-  //   char c = (char) ((num + 70) % 120);
-  //   lcd_set_cursor(0, 0);
-  //   lcd_print_char(c);
-  // }
+    nalej_submenu.add_item(MenuItem("Nalej", MENU_TYPE_CALLBACK, drive_pump));
+    nalej_submenu.add_item(MenuItem("Pump 1", MENU_TYPE_NUMBER_INPUT, nullptr, &pump_1_val));
+    nalej_submenu.add_item(MenuItem("Pump 2", MENU_TYPE_NUMBER_INPUT, nullptr, &pump_2_val));
+    nalej_submenu.add_item(MenuItem("Exit", MENU_TYPE_DEFAULT, nullptr, nullptr, nullptr, &main_menu));
 
-  // sleep_ms(2500);
-  // while(true){
-  //   lcd.lcd_clear();
-  //   // lcd_backlight(false);
+    system_submenu.add_item(MenuItem("Temp", MENU_TYPE_VALUE_READ, nullptr, nullptr, read_temperature));
+    system_submenu.add_item(MenuItem("Exit", MENU_TYPE_DEFAULT, nullptr, nullptr, nullptr, &main_menu));
 
-  //   char str[20];
-  //   sprintf(str, "%dcm", sensor.get_cm());
+    main_menu.add_item(MenuItem("Nalej Sub", MENU_TYPE_DEFAULT, nullptr, nullptr, nullptr, &nalej_submenu));
+    main_menu.add_item(MenuItem("System Sub", MENU_TYPE_DEFAULT, nullptr, nullptr, nullptr, &system_submenu));
 
-  //   lcd.lcd_set_cursor(0,0);
-  //   lcd.lcd_print_str(str);
-  //   sleep_ms(1000);
-  // }
-
-  // stdio_init_all();
-
-  // // Button button1(10);
-  // // Button button2(11);
-  // // Button button3(12);
-  // // gpio_init(11);
-  // // gpio_set_dir(11, GPIO_IN);
-  // Button* mid = new Button(11);
-
-  // while (true) {
-  //   if(mid->is_pressed()){
-  //     lcd.lcd_clear();
-  //     lcd.lcd_set_cursor(0,0);
-  //     lcd.lcd_print_str("fucking pressed");
-  //     sleep_ms(500);
-  //   }
-  //     lcd.lcd_clear();
-  //     sleep_ms(500); // Small delay to avoid spamming the output
-  //     //printf("checked\n");
-  // }
-
-    stdio_init_all();
-
-    // Initialize buttons
-    Button* up_button = new Button(UP_PIN);
-    Button* down_button = new Button(DOWN_PIN);
-    Button* right_button = new Button(RIGHT_PIN);
-    Button* left_button = new Button(LEFT_PIN);
-    Button* middle_button = new Button(MIDDLE_PIN);
-
-    // Initialize LCD
-    LCD lcd;
-    lcd.lcd_init(4, 5, 0x27); // Replace with your actual SDA, SCL pins and I2C address
-
-    // Create menu structure
-    // Menu main_menu("Main Menu");
-    // Menu number_input_menu("Set Value", &main_menu, MENU_TYPE_NUMBER_INPUT);
-    // Menu submenu1("Submenu 1", &main_menu);
-    // Menu submenu2("Submenu 2", &main_menu);
-
-    // // Set current menu
-    // Menu::set_current_menu(&main_menu);
-
-    // Main loop
-    // while (true) {
-    //     Menu *current_menu = Menu::get_current_menu();
-    //     current_menu->display(lcd);
-    //     current_menu->handle_input(*up_button, *down_button, *right_button, *left_button, *middle_button);
-    //     sleep_ms(100); // Small delay to debounce the buttons
-    // }
-    int val = 0;
-    while(true){
-      // while(!left_button->is_pressed() && !middle_button->is_pressed() 
-      //   && !right_button->is_pressed()){
-      //     // do nothing
-      //   }
-
-        if(right_button->is_pressed())
-          val += 10;
-        if(left_button->is_pressed())
-          val -= 10;
-
-
-        lcd.lcd_clear();
-        lcd.lcd_set_cursor(0,0);
-        char str[20];
-        sprintf(str, "Value: %d", val);
-        lcd.lcd_print_str(str);
-        sleep_ms(100);
-    }
+    // Run the main menu
+    main_menu.run();
 
     return 0;
 }
+
+
+// kolos
+/**
+ * zadania zamkniete
+ * brak ujemnych punktow
+ * kartka A4
+ * kalkulator
+ * 
+ * wszystkie wykłady
+*/

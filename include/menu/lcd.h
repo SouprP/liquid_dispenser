@@ -12,7 +12,11 @@
 class LCD{
     private:
         uint8_t LCD_ADDR;
+        uint8_t backlight_state;
 
+        // all commands are from here
+        // https://www.handsontec.com/dataspecs/I2C_2004_LCD.pdf
+        
         // commands
         static const int LCD_CLEAR_DISPLAY = 0x01;
         static const int LCD_RETUR_NHOME = 0x02;
@@ -50,7 +54,6 @@ class LCD{
         static const int LCD_CHARACTER = 1;
         static const int LCD_COMMAND = 0;
 
-    public:
         /**
          * 
          *          CORE FUNCTIONS
@@ -58,13 +61,9 @@ class LCD{
         */
 
         /**
-         * Initialize the I2C connection and setup the LCD.
-         * 
-         * @param SDA_PIN SDA pin of the device.
-         * @param SCL_PIN SCL pin of the device.
-         * @param addr Address of the device, typically 0x27.
+         * Backlight handle.
         */
-        void lcd_init(uint8_t SDA_PIN, uint8_t SCL_PIN, uint8_t addr);
+        void lcd_display_handle(uint8_t val);
 
         /**
          * Writing a single byte to the LCD I2C line.
@@ -76,12 +75,21 @@ class LCD{
         */
         void lcd_command(uint8_t val, uint8_t mode, uint8_t backlight);
 
-
+    public:
         /**
          * 
          *           FUNCTIONALITY 
          * 
         */
+
+        /**
+         * Initialize the I2C connection and setup the LCD.
+         * 
+         * @param SDA_PIN SDA pin of the device.
+         * @param SCL_PIN SCL pin of the device.
+         * @param addr Address of the device, typically 0x27.
+        */
+        void lcd_init(uint8_t SDA_PIN, uint8_t SCL_PIN, uint8_t addr);
 
         /**
          * Clearing the screen
@@ -111,7 +119,7 @@ class LCD{
         /**
          * Turning ON and OFF the backlight of the screen.
         */
-        void lcd_backlight(uint8_t val);
+        void lcd_backlight(bool enabled);
 
 };
 #endif

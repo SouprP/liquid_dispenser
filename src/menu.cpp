@@ -1,95 +1,112 @@
 #include <menu/menu.h>
-#include <stdio.h>
+#include <vector>
+#include <functional>
+#include <cstdio>
 
-// Initialize the static member
-Menu* Menu::current_menu = nullptr;
+Menu::Menu(LCD* lcd_display)
+    : lcd(lcd_display), current_index(0), up(nullptr), down(nullptr), right(nullptr), left(nullptr), middle(nullptr) {}
 
-Menu::Menu(const char *name, Menu *parent, MenuType type) : name(name), parent(parent), type(type), num_children(0), selected_item(0), number_value(0) {
-    if (parent) {
-        parent->add_child(this);
-    }
+void Menu::add_item(const MenuItem& item) {
+    items.push_back(item);
 }
 
-void Menu::add_child(Menu *child) {
-    if (num_children < 4) {
-        children[num_children++] = child;
-    }
+void Menu::init_button(Button* left_btn, Button* up_btn, Button* middle_btn, Button* down_btn, Button* right_btn) {
+    left = left_btn;
+    up = up_btn;
+    middle = middle_btn;
+    down = down_btn;
+    right = right_btn;
 }
 
-void Menu::display(LCD &lcd) {
-    lcd.lcd_clear();
-    lcd.lcd_set_cursor(0, 0);
-    lcd.lcd_print_str(name);
-
-    if (type == MENU_TYPE_NUMBER_INPUT) {
-        lcd.lcd_set_cursor(1, 0);
-        char buffer[16];
-        sprintf(buffer, "Value: %d", number_value);
-        lcd.lcd_print_str(buffer);
-    } else {
-        for (uint8_t i = 0; i < num_children; i++) {
-            lcd.lcd_set_cursor(i + 1, 0);
-            if (i == selected_item) {
-                lcd.lcd_print_str("> ");
-            } else {
-                lcd.lcd_print_str("  ");
-            }
-            lcd.lcd_print_str(children[i]->name);
+void Menu::display() {
+    lcd->lcd_clear();
+    for (size_t i = 0; i < items.size(); ++i) {
+        lcd->lcd_set_cursor(i, 0);
+        if (i == current_index) {
+            lcd->lcd_print_str(">");
+        } else {
+            lcd->lcd_print_str(" ");
+        }
+        lcd->lcd_print_str(items[i].display_name);
+        if (items[i].type == MENU_TYPE_VALUE && items[i].value) {
+            char buffer[10];
+            sprintf(buffer, ": %d", *items[i].value);
+            lcd->lcd_print_str(buffer);
+        } else if (items[i].type == MENU_TYPE_VALUE_READ && items[i].value_read_function) {
+            char buffer[10];
+            sprintf(buffer, ": %d", items[i].value_read_function());
+            lcd->lcd_print_str(buffer);
         }
     }
 }
 
-void Menu::handle_input(Button &up, Button &down, Button &right, Button &left, Button &middle) {
-    while (!up.is_pressed() && !down.is_pressed() && !right.is_pressed() && !left.is_pressed() && !middle.is_pressed()) {
+void Menu::handle_input() {
+    bool up_b = up->is_pressed();
+    bool down_b = down->is_pressed();
+    bool middle_b = middle->is_pressed();
+    bool rigtt_b = right->is_pressed();
+    bool left_b = left->is_pressed();
+    // while (!up->is_pressed() && !down->is_pressed() && !right->is_pressed() && !left->is_pressed() && !middle->is_pressed()) {
+    //     // just wait and do nothing
+    // }
+
+    while(!up_b && !down_b && !middle_b && !rigtt_b && !left_b){
         // just wait and do nothing
     }
 
-    if (type == MENU_TYPE_NUMBER_INPUT) {
-        if (right.is_pressed()) {
-            number_value++;
-            printf("right\n");
-        } else if (left.is_pressed()) {
-            number_value--;
-            printf("Left\n");
-        } else if (middle.is_pressed()) {
-            // Exit number input mode
-            printf("exit\n");
-            set_current_menu(parent);
-        }
-    } else {
-        if (up.is_pressed()) {
-            if (selected_item > 0) {
-                selected_item--;
-            }
-        } else if (down.is_pressed()) {
-            if (selected_item < num_children - 1) {
-                selected_item++;
-            }
-        // } else if (right.is_pressed() && children[selected_item] != nullptr) {
-        //     set_current_menu(children[selected_item]);
-        // } else if (left.is_pressed() && parent != nullptr) {
-        //     set_current_menu(parent);
-        } else if (middle.is_pressed()) {
-            // Enter number input mode if the selected item is of that type
-            if (children[selected_item]->type == MENU_TYPE_NUMBER_INPUT) {
-                set_current_menu(children[selected_item]);
-            } else {
-                // Implement action for middle button if needed
-                printf("Action on %s\n", children[selected_item]->name);
-            }
+    if (up_b) {
+        current_index = (current_index - 1 + items.size()) % items.size();
+    } else if (down_b) {
+        current_index = (current_index + 1) % items.size();
+    } else if (middle_b) {
+        MenuItem& item = items[current_index];
+        switch (item.type) {
+            case MENU_TYPE_CALLBACK:
+                if (item.callback) item.callback();
+                break;
+            case MENU_TYPE_NUMBER_INPUT:
+                while (!middle->is_pressed()) {
+                    if (left->is_pressed() && item.value) {
+                        if (*item.value >= 10) (*item.value) -= 10;
+                    }
+                    if (right->is_pressed() && item.value) {
+                        (*item.value) += 10;
+                    }
+                    display();
+                }
+                break;
+            case MENU_TYPE_DEFAULT:
+            case MENU_TYPE_VALUE:
+            case MENU_TYPE_VALUE_READ:
+                if (item.submenu) {
+                    item.submenu->run();
+                }
+                break;
         }
     }
+    display();
+}
 
-    // Wait for all buttons to be released before continuing
-    while (up.is_pressed() || down.is_pressed() || right.is_pressed() || left.is_pressed() || middle.is_pressed()) {
-        // just wait and do nothing
+void Menu::run() {
+    display();
+    while (true) {
+        handle_input();
     }
 }
 
-Menu* Menu::get_current_menu() {
-    return current_menu;
-}
 
-void Menu::set_current_menu(Menu *menu) {
-    current_menu = menu;
-}
+// kolos
+// historia mikroprocesorów
+
+    // bool up_b = up->is_pressed();
+    // bool down_b = down->is_pressed();
+    // bool middle_b = middle->is_pressed();
+    // bool rigtt_b = right->is_pressed();
+    // bool left_b = left->is_pressed();
+    // // while (!up->is_pressed() && !down->is_pressed() && !right->is_pressed() && !left->is_pressed() && !middle->is_pressed()) {
+    // //     // just wait and do nothing
+    // // }
+
+    // while(!up_b && !down_b && !middle_b && !rigtt_b && !left_b){
+    //     // just wait and do nothing
+    // }

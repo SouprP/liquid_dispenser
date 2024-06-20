@@ -29,6 +29,7 @@ add_library(program_libs
     src/hc_sr04.cpp
     src/button.cpp
     src/menu.cpp
+    src/pump_driver.cpp
 )
 
 target_link_libraries(program_libs

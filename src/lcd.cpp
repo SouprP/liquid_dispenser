@@ -56,9 +56,9 @@ void LCD::lcd_command(uint8_t val, uint8_t mode, uint8_t backlight){
     }
 
     i2c_write_byte(high);
-    lcd_backlight(high);
+    lcd_display_handle(high);
     i2c_write_byte(low);
-    lcd_backlight(low);
+    lcd_display_handle(low);
 }
 
 /**
@@ -68,17 +68,17 @@ void LCD::lcd_command(uint8_t val, uint8_t mode, uint8_t backlight){
 */
 
 void LCD::lcd_clear(){
-    lcd_command(LCD_CLEAR_DISPLAY, LCD_COMMAND, 1);
+    lcd_command(LCD_CLEAR_DISPLAY, LCD_COMMAND, backlight_state);
 }
 
 void LCD::lcd_set_cursor(uint8_t line, uint8_t position){
     uint8_t line_offsets[] = { 0x00, 0x40, 0x14, 0x54 };
     uint8_t val = 0x80 + line_offsets[line] + position;
-    lcd_command(val, LCD_COMMAND, 1);
+    lcd_command(val, LCD_COMMAND, backlight_state);
 }
 
 void LCD::lcd_print_char(char val){
-    lcd_command(val, LCD_CHARACTER, 1);
+    lcd_command(val, LCD_CHARACTER, backlight_state);
 }
 
 void LCD::lcd_print_str(const char *str){
@@ -94,7 +94,7 @@ void LCD::lcd_print_custom(uint8_t location, uint8_t charmap[]){
     }
 }
 
-void LCD::lcd_backlight(uint8_t val){
+void LCD::lcd_display_handle(uint8_t val){
     #define DELAY_US 600
     sleep_us(DELAY_US);
     i2c_write_byte(val | LCD_ENABLE_BIT);
@@ -102,3 +102,14 @@ void LCD::lcd_backlight(uint8_t val){
     i2c_write_byte(val & ~LCD_ENABLE_BIT);
     sleep_us(DELAY_US);
 }
+
+void LCD::lcd_backlight(bool enabled){
+    if(enabled){
+        lcd_command(0x0C, LCD_COMMAND, 1);
+        backlight_state = 1;
+        return;
+    }
+
+    lcd_command(0x08, LCD_COMMAND, 0);
+    backlight_state = 0;
+}   
