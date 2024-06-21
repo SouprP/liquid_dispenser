@@ -7,12 +7,13 @@
 #include "hardware/i2c.h"
 #include "pico/binary_info.h"
 
-#define I2C_PORT i2c0
+// #define I2C_PORT i2c0
 
 class LCD{
     private:
         uint8_t LCD_ADDR;
         uint8_t backlight_state;
+        i2c_inst_t* I2C_PORT;
 
         // all commands are from here
         // https://www.handsontec.com/dataspecs/I2C_2004_LCD.pdf
@@ -89,7 +90,8 @@ class LCD{
          * @param SCL_PIN SCL pin of the device.
          * @param addr Address of the device, typically 0x27.
         */
-        void lcd_init(uint8_t SDA_PIN, uint8_t SCL_PIN, uint8_t addr);
+        //void lcd_init(uint8_t SDA_PIN, uint8_t SCL_PIN, uint8_t addr);
+        void lcd_init(i2c_inst_t* i2c_instance, uint8_t addr);
 
         /**
          * Clearing the screen

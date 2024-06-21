@@ -30,6 +30,7 @@ add_library(program_libs
     src/button.cpp
     src/menu.cpp
     src/pump_driver.cpp
+    src/bmp280.cpp
 )
 
 target_link_libraries(program_libs

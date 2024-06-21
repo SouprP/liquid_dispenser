@@ -14,14 +14,16 @@
  * 
 */
 
-void LCD::lcd_init(uint8_t SDA_PIN, uint8_t SCL_PIN, uint8_t addr){
+void LCD::lcd_init(i2c_inst_t* i2c_instance, uint8_t addr){
+    I2C_PORT = i2c_instance;
     LCD_ADDR = addr;
+    this->backlight_state = true;
 
-    i2c_init(I2C_PORT, 100 * 1000);
-    gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(SDA_PIN);
-    gpio_pull_up(SCL_PIN);
+    // i2c_init(I2C_PORT, 100 * 1000);
+    // gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
+    // gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
+    // gpio_pull_up(SDA_PIN);
+    // gpio_pull_up(SCL_PIN);
 
     // Make the I2C pins available to picotool
     // bi_decl( bi_2pins_with_func(sda, scl, GPIO_FUNC_I2C)); For some reason this produces an error.
