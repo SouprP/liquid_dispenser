@@ -6,7 +6,8 @@
 class PumpDriver{
     private:
         // ml to time in ms convertion rate
-        float FLOW_CONV = 1.0f;
+        // 35ml/s => 28,21ms/ml
+        float FLOW_CONV = 28.21f;
 
         LCD lcd;
         HC_SR04 sensor;

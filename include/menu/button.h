@@ -4,18 +4,27 @@
 #include <pico/stdlib.h>
 #include <hardware/gpio.h>
 
-class Button {
-    public:
-        Button(uint gpio_pin);
-        bool is_pressed();
-        void set_debounce_time(uint32_t debounce_time);
+// #define DEFAULT_DEBOUNCE 200000
+#define DEFAULT_DEBOUNCE 400000
 
+class Button {
     private:
         uint gpio_pin;
         uint32_t debounce_time;
         absolute_time_t last_press_time;
 
+        bool down_state;
+
         bool debounce();
+
+    public:
+        Button(uint gpio_pin);
+
+        bool is_pressed();
+        bool was_down();
+
+        void set_debounce_time(uint32_t debounce_time);
+        void update_state();
 };
 
 #endif

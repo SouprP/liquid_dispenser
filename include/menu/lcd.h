@@ -64,7 +64,7 @@ class LCD{
         /**
          * Backlight handle.
         */
-        void lcd_display_handle(uint8_t val);
+        void display_handle(uint8_t val);
 
         /**
          * Writing a single byte to the LCD I2C line.
@@ -74,7 +74,7 @@ class LCD{
         /**
          * Send information to the LCD.
         */
-        void lcd_command(uint8_t val, uint8_t mode, uint8_t backlight);
+        void command(uint8_t val, uint8_t mode, uint8_t backlight);
 
     public:
         /**
@@ -91,37 +91,37 @@ class LCD{
          * @param addr Address of the device, typically 0x27.
         */
         //void lcd_init(uint8_t SDA_PIN, uint8_t SCL_PIN, uint8_t addr);
-        void lcd_init(i2c_inst_t* i2c_instance, uint8_t addr);
+        void init(i2c_inst_t* i2c_instance, uint8_t addr);
 
         /**
          * Clearing the screen
         */
-        void lcd_clear();
+        void clear();
 
         /**
          * Go to the specified location on the screen
         */
-        void lcd_set_cursor(uint8_t line, uint8_t position);
+        void set_cursor(uint8_t line, uint8_t position);
 
         /**
          * Writing a char on a LCD screen.
         */
-        void lcd_print_char(char val);
+        void print_char(char val);
 
         /**
          * Writing a string on a LCD screen.
         */
-        void lcd_print_str(const char *str);
+        void print_str(const char *str);
 
         /**
          * Writing a custom  character on a LCD screen.
         */
-        void lcd_print_custom(uint8_t location, uint8_t charmap[]);
+        void print_custom(uint8_t location, uint8_t charmap[]);
 
         /**
          * Turning ON and OFF the backlight of the screen.
         */
-        void lcd_backlight(bool enabled);
+        void backlight(bool enabled);
 
 };
 #endif

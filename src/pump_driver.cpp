@@ -18,43 +18,33 @@ void PumpDriver::init(LCD lcd, uint PUMP_1, uint PUMP_2){
 }
 
 void PumpDriver::drive(uint64_t ml_1, uint64_t ml_2){
-    // stdio_init_all();
-    sleep_ms(5000);
+    uint64_t time_1 = (ml_1 * FLOW_CONV);
+    uint64_t time_2 = (ml_2 * FLOW_CONV);
 
-    uint64_t time_1 = ml_1 * FLOW_CONV;
-    uint64_t time_2 = ml_2 * FLOW_CONV;
+    lcd.clear();
+    uint64_t distance = sensor.get_cm();
+    while(distance <= 20 || distance >= 25){
+        lcd.clear();
+        lcd.set_cursor(1,1);
+        lcd.print_str("NO GLASS IN RANGE");
+        sleep_ms(500);
+        distance = sensor.get_cm();
+    }
 
-    lcd.lcd_backlight(true);
-    // while(1){
-    //     uint64_t cm = sensor.get_cm();
-    //     char str[20];
-    //     sprintf(str, "%dcm", cm);
-    //     lcd.lcd_clear();
-    //     lcd.lcd_set_cursor(0,0);
-    //     lcd.lcd_print_str(str);
-    //     // printf("%dcm\n", cm);
-    //     sleep_ms(500);
-    // }
-    // return;
+    lcd.clear();
+    lcd.set_cursor(1,6);
+    lcd.print_str("PUMPING");
+    
+    char buff[18];
 
-    // sleep_us(100);
-    // if(sensor.get_cm() <= 15){
-    //     sleep_ms(50);
-    //     lcd.lcd_clear();
-    //     lcd.lcd_set_cursor(1, 5);
-    //     lcd.lcd_print_str("BRAK SZKLANKI");
+    lcd.set_cursor(2,0);
+    sprintf(buff, "time_1: %d", time_1);
+    lcd.print_str(buff);
 
-    //     // loop till there is no cup
-    //     while(sensor.get_cm() <= 15){
-    //         uint64_t cm = sensor.get_cm();
-    //         printf("%dcm", cm);
-    //         sleep_ms(50);
-    //     }
-    // } 
+    lcd.set_cursor(3,0);
+    sprintf(buff, "time_2: %d", time_2);
+    lcd.print_str(buff);
 
-    lcd.lcd_clear();
-    lcd.lcd_set_cursor(0,0);
-    lcd.lcd_print_str("pumping");
     if(time_1 > time_2){
         gpio_put(PUMP_1, 0);
         gpio_put(PUMP_2, 0);
@@ -63,6 +53,7 @@ void PumpDriver::drive(uint64_t ml_1, uint64_t ml_2){
 
         sleep_ms(time_2);
         gpio_put(PUMP_2, 1);
+        
 
         sleep_ms(time_1 - time_2);
         gpio_put(PUMP_1, 1);
@@ -79,10 +70,9 @@ void PumpDriver::drive(uint64_t ml_1, uint64_t ml_2){
     sleep_ms(time_1);
     gpio_put(PUMP_1, 1);
 
+
     sleep_ms(time_2 - time_1);
     gpio_put(PUMP_2, 1);
 
-    lcd.lcd_clear();
-    lcd.lcd_set_cursor(0,0);
-    lcd.lcd_print_str("done");
+    lcd.clear();
 }

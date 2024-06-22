@@ -35,6 +35,7 @@ add_library(program_libs
 
 target_link_libraries(program_libs
     pico_stdlib 
+    pico_multicore
     hardware_i2c
     pico_rand
 )
@@ -49,6 +50,7 @@ target_include_directories(program_libs PUBLIC
 target_link_libraries(liquid_dispenser 
     program_libs
     pico_stdlib 
+    pico_multicore
     hardware_i2c
     pico_rand
 )
