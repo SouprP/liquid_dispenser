@@ -51,7 +51,7 @@ class LCD{
 
         static const int LCD_ENABLE_BIT = 0x04;
 
-        // Modes for lcd_send_byte
+        // modes for lcd_send_byte
         static const int LCD_CHARACTER = 1;
         static const int LCD_COMMAND = 0;
 
@@ -67,12 +67,12 @@ class LCD{
         void display_handle(uint8_t val);
 
         /**
-         * Writing a single byte to the LCD I2C line.
+         * @brief Writing a single byte to the LCD I2C line.
         */
         void i2c_write_byte(uint8_t val);
 
         /**
-         * Send information to the LCD.
+         * @brief Send information to the LCD.
         */
         void command(uint8_t val, uint8_t mode, uint8_t backlight);
 
@@ -84,7 +84,7 @@ class LCD{
         */
 
         /**
-         * Initialize the I2C connection and setup the LCD.
+         * @brief Initialize the I2C connection and setup the LCD.
          * 
          * @param SDA_PIN SDA pin of the device.
          * @param SCL_PIN SCL pin of the device.
@@ -94,32 +94,32 @@ class LCD{
         void init(i2c_inst_t* i2c_instance, uint8_t addr);
 
         /**
-         * Clearing the screen
+         * @brief Clearing the screen
         */
         void clear();
 
         /**
-         * Go to the specified location on the screen
+         * @brief Go to the specified location on the screen
         */
         void set_cursor(uint8_t line, uint8_t position);
 
         /**
-         * Writing a char on a LCD screen.
+         * @brief Writing a char on a LCD screen.
         */
         void print_char(char val);
 
         /**
-         * Writing a string on a LCD screen.
+         * @brief Writing a string on a LCD screen.
         */
         void print_str(const char *str);
 
         /**
-         * Writing a custom  character on a LCD screen.
+         * @brief Writing a custom  character on a LCD screen.
         */
         void print_custom(uint8_t location, uint8_t charmap[]);
 
         /**
-         * Turning ON and OFF the backlight of the screen.
+         * @brief Turning ON and OFF the backlight of the screen.
         */
         void backlight(bool enabled);
 

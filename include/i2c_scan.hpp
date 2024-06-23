@@ -5,15 +5,24 @@
 #include <hardware/i2c.h>
 #include <pico/stdlib.h>
 
-
+/**
+ * @brief Checks if the given address has special purpose, so we exclude
+ * it from the scan
+ * 
+ * @param addr address to be checked
+ * @return true if is special, otherwise false.
+ */
 bool reserved_addr(uint8_t addr) {
     return (addr & 0x78) == 0 || (addr & 0x78) == 0x78;
 }
 
+/**
+ * @brief Scans all the avaliable addresses and writes a map via the printf() to USB
+ * of the addresses where devices are located.
+ */
 void i2c_scan(uint8_t PIN_SDA, uint8_t PIN_SCL){
     stdio_init_all();
 
-    // This example will use I2C0 on GPIO4 (SDA) and GPIO5 (SCL) running at 100kHz
     i2c_init(i2c0, 100 * 1000);
     gpio_set_function(PIN_SDA, GPIO_FUNC_I2C);
     gpio_set_function(PIN_SCL, GPIO_FUNC_I2C);

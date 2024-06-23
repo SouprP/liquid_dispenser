@@ -17,8 +17,11 @@
 #define SCL_PIN 5
 
 // Pump pins
-#define PUMP_PIN_1 12 // ?
-#define PUMP_PIN_2 13 // ?
+#define PUMP_PIN_1 12
+#define PUMP_PIN_2 13
+
+// TRIG 3
+// ECHO 2
 
 // Button pins
 #define UP_PIN     6
@@ -62,63 +65,5 @@ int main() {
   Menu menu(lcd, bmp280, pump_driver, up, down, middle, left, right);
   menu.run();
 
-  // while (true) {
-  //     lcd.clear();
-
-  //     float temperature = bmp280.get_temperature();
-  //     float pressure = bmp280.get_pressure();
-  //     printf("Temperature: %.2f C\n", temperature);
-  //     printf("Pressure: %.2f kPa\n", pressure / 1000.0f);
-
-  //     // Display the readings on the LCD
-  //     char buffer[16];
-  //     snprintf(buffer, sizeof(buffer), "Temp: %.2f C", temperature);
-  //     lcd.set_cursor(0,0);
-  //     lcd.print_str(buffer);
-  //     snprintf(buffer, sizeof(buffer), "Press: %.2f kPa", pressure / 1000.0f);
-  //     lcd.set_cursor(1,0);
-  //     lcd.print_str(buffer);
-
-  //     lcd.set_cursor(2,0);
-  //     char str[20];
-  //     sprintf(str, "%dcm", sensor.get_cm());
-  //     lcd.print_str(str);
-
-  //     sleep_ms(1000);
-  // }
-
-  // while(true){
-  //   lcd.clear();
-  //   lcd.set_cursor(0,0);
-
-  //   if(upButton.is_pressed())
-  //     lcd.print_str("UP");
-
-  //   if(downButton.is_pressed())
-  //     lcd.print_str("DOWN");
-
-  //   if(middleButton.is_pressed())
-  //     lcd.print_str("MIDDLE");
-
-  //   if(leftButton.is_pressed())
-  //     lcd.print_str("LEFT");
-    
-  //   if(rightButton.is_pressed())
-  //     lcd.print_str("RIGTH");
-
-  //   sleep_ms(50);
-  // }
-
     return 0;
 }
-
-
-// kolos
-/**
- * zadania zamkniete
- * brak ujemnych punktow
- * kartka A4
- * kalkulator
- * 
- * wszystkie wykłady
-*/

@@ -88,7 +88,7 @@ void Menu::handle_input(){
     else if(middle_button.was_down()){
         handle_action();
     }
-    //else if(left_button.is_pressed())
+
     else{
         input_avaliable = false;
     }
@@ -111,6 +111,9 @@ void Menu::display_root(){
 
     lcd.set_cursor(1, 1);
     lcd.print_str("SETTINGS [A]");
+
+    lcd.set_cursor(2, 1);
+    lcd.print_str("CLEANING [A]");
 
     lcd.set_cursor(3, 1);
     lcd.print_str("Action[A] Input[IN]");
@@ -225,6 +228,9 @@ void Menu::handle_action(){
             else if(current_index == MAIN_SUB::SETTINGS){
                 handle_menu_change(Page::SETTINGS_PAGE);
             }
+            else if(current_index == MAIN_SUB::CLEANING){
+                hanlde_cleaning();
+            }
 
             break;
 
@@ -250,6 +256,7 @@ void Menu::handle_action(){
                 handle_var_action(VAR_TYPE::LIQUID_VAR);
             }
             else if(current_index == SETTINGS_SUB::PRESSURE){
+                // should tight_loop_contents() be used?
                 // do nothing
             }
             else if(current_index == SETTINGS_SUB::TEMP){
@@ -353,7 +360,7 @@ void Menu::update_buttons_task() {
             instance->left_button.update_state();
             instance->right_button.update_state();
         }
-        sleep_ms(150); // Increase polling rate
+        sleep_ms(150); //  polling rate
     }
 }
 
@@ -363,4 +370,8 @@ void Menu::handle_pour(){
     uint64_t ml_1 = (uint64_t) (liquid_value * ((float) pump_1_value / 100));
     uint64_t ml_2 = (uint64_t) (liquid_value * ((float) pump_2_value / 100));
     pump_driver.drive(ml_1, ml_2);
+}
+
+void Menu::hanlde_cleaning(){
+    pump_driver.drive(CLEAN_AMOUNT, CLEAN_AMOUNT);
 }
