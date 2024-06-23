@@ -30,7 +30,7 @@ void PumpDriver::drive(uint64_t ml_1, uint64_t ml_2){
         lcd.print_str("NO GLASS IN RANGE");
 
         lcd.set_cursor(2,1);
-        sprintf(buffer, " 10 <= X=%d <= 25", distance);
+        sprintf(buffer, "10 <= X=%d <= 25", distance);
         lcd.print_str(buffer);
         sleep_ms(500);
         distance = sensor.get_cm();

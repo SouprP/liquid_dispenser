@@ -145,7 +145,7 @@ void Menu::display_settings(){
     lcd.print_str(buffer);
 
     lcd.set_cursor(1, 1);
-    sprintf(buffer, "PRESSURE: %.1fPa", bmp280.get_pressure());
+    sprintf(buffer, "PRESSURE: %.1fhPa", bmp280.get_pressure());
     lcd.print_str(buffer);
 
     lcd.set_cursor(2, 1);
